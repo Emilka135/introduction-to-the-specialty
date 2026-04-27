@@ -201,38 +201,31 @@ async function savePassword(e) {
 }
 
 // Password Actions
+// Показ пароля
 async function showPassword(id) {
-    try {
-        const response = await fetch(`${API_URL}/vault/${id}`);
-        if (!response.ok) throw new Error('Ошибка');
-        
-        const pwd = await response.json();
-        // In real app, you would decrypt here
-        showNotification(`Пароль для ${pwd.title}: *** (демо режим)`, 'success');
-    } catch (error) {
-        showError('Не удалось показать пароль');
-    }
+  try {
+    const response = await fetch(`${API_URL}/vault/${id}/plain`);
+    if (!response.ok) throw new Error('Ошибка');
+    
+    const data = await response.json();
+    showNotification(`Пароль: ${data.password}`, 'success');
+  } catch (error) {
+    showError('Не удалось показать пароль');
+  }
 }
 
+// Копирование пароля
 async function copyVaultPassword(id) {
-    showNotification('В демо режиме пароль скрыт', 'error');
-}
-
-async function deletePassword(id) {
-    if (!confirm('Удалить этот пароль?')) return;
-
-    try {
-        const response = await fetch(`${API_URL}/vault/${id}`, {
-            method: 'DELETE'
-        });
-
-        if (!response.ok) throw new Error('Ошибка удаления');
-
-        showNotification('Пароль удалён', 'success');
-        loadVault();
-    } catch (error) {
-        showError('Не удалось удалить пароль');
-    }
+  try {
+    const response = await fetch(`${API_URL}/vault/${id}/plain`);
+    if (!response.ok) throw new Error('Ошибка');
+    
+    const data = await response.json();
+    await navigator.clipboard.writeText(data.password);
+    showNotification('Пароль скопирован!', 'success');
+  } catch (error) {
+    showError('Не удалось скопировать пароль');
+  }
 }
 
 // Utility Functions
@@ -254,3 +247,8 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
+
+// Глобальный доступ для onclick
+window.deletePassword = deletePassword;
+window.copyVaultPassword = copyVaultPassword;
+window.showPassword = showPassword;

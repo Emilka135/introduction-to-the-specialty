@@ -75,18 +75,28 @@ app.post('/api/vault', async (req, res) => {
       return res.status(400).json({ error: 'Название и пароль обязательны' });
     }
 
-    // Hash password before storing
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // // Hash password before storing
+    // const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newPassword = {
-      id: idCounter++,
-      title,
-      username: username || '',
-      password: hashedPassword,
-      notes: notes || '',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
+    // const newPassword = {
+    //   id: idCounter++,
+    //   title,
+    //   username: username || '',
+    //   password: hashedPassword,
+    //   notes: notes || '',
+    //   createdAt: new Date().toISOString(),
+    //   updatedAt: new Date().toISOString()
+    // };
+
+const newPassword = {
+  id: idCounter++,
+  title,
+  username: username || '',
+  password: password,  // ← храним как есть (для демо!)
+  notes: notes || '',
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString()
+};
 
     passwords.push(newPassword);
     res.status(201).json({ message: 'Пароль сохранён', password: { ...newPassword, password: '***' } });
@@ -142,4 +152,18 @@ app.get('/api/health', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`🔐 Server running on http://localhost:${PORT}`);
+});
+
+
+// Get password plain text (for demo)
+app.get('/api/vault/:id/plain', (req, res) => {
+  try {
+    const password = passwords.find(p => p.id === parseInt(req.params.id));
+    if (!password) {
+      return res.status(404).json({ error: 'Пароль не найден' });
+    }
+    res.json({ password: password.password });
+  } catch (error) {
+    res.status(500).json({ error: 'Ошибка получения пароля' });
+  }
 });
