@@ -145,6 +145,7 @@ app.delete('/api/vault/:id', (req, res) => {
   }
 });
 
+// yeap
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Password Manager API is running' });
