@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔐 Password Manager</h1>
+            <p class="subtitle">Генератор и хранилище паролей</p>
+        </header>
+
+        <!-- Generator Section -->
+        <section class="card generator-section">
+            <h2>🎲 Генератор паролей</h2>
+            
+            <div class="password-display">
+                <input type="text" id="generatedPassword" readonly placeholder="Нажмите 'Сгенерировать'">
+                <button id="copyPassword" class="btn-secondary" title="Копировать">📋</button>
+            </div>
+
+            <div class="strength-indicator" id="strengthIndicator">
+                <div class="strength-bar"></div>
+                <span class="strength-text"></span>
+            </div>
+
+            <div class="options">
+                <div class="option-group">
+                    <label>Длина пароля: <span id="lengthValue">16</span></label>
+                    <input type="range" id="passwordLength" min="4" max="64" value="16">
+                </div>
+
+                <div class="checkboxes">
+                    <label class="checkbox">
+                        <input type="checkbox" id="useUppercase" checked>
+                        <span>A-Z (Заглавные)</span>
+                    </label>
+                    <label class="checkbox">
+                        <input type="checkbox" id="useLowercase" checked>
+                        <span>a-z (Строчные)</span>
+                    </label>
+                    <label class="checkbox">
+                        <input type="checkbox" id="useNumbers" checked>
+                        <span>0-9 (Цифры)</span>
+                    </label>
+                    <label class="checkbox">
+                        <input type="checkbox" id="useSymbols" checked>
+                        <span>!@# (Символы)</span>
+                    </label>
+                </div>
+
+                <button id="generateBtn" class="btn-primary">Сгенерировать пароль</button>
+                <button id="saveToVault" class="btn-secondary" style="display:none;">💾 Сохранить в хранилище</button>
+            </div>
+        </section>
+
+        <!-- Vault Section -->
+        <section class="card vault-section">
+            <h2>🗄️ Моё хранилище</h2>
+            
+            <div id="passwordList" class="password-list">
+                <p class="empty-state">Хранилище пусто. Сгенерируйте и сохраните свой первый пароль!</p>
+            </div>
+        </section>
+
+        <!-- Add/Edit Modal -->
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <h3>💾 Сохранить пароль</h3>
+                <form id="savePasswordForm">
+                    <div class="form-group">
+                        <label for="saveTitle">Название *</label>
+                        <input type="text" id="saveTitle" required placeholder="Например: Google">
+                    </div>
+                    <div class="form-group">
+                        <label for="saveUsername">Логин/Email</label>
+                        <input type="text" id="saveUsername" placeholder="user@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="savePassword">Пароль *</label>
+                        <input type="text" id="savePassword" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="saveNotes">Заметки</label>
+                        <textarea id="saveNotes" rows="2" placeholder="Дополнительная информация"></textarea>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" id="closeModal" class="btn-secondary">Отмена</button>
+                        <button type="submit" class="btn-primary">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Notifications -->
+        <div id="notification" class="notification"></div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
