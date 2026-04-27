@@ -22,6 +22,12 @@ const notification = document.getElementById('notification');
 
 // State
 let currentGeneratedPassword = '';
+let passwordToDelete = null;
+const deleteModal = document.getElementById('deleteModal');
+const cancelDelete = document.getElementById('cancelDelete');
+const confirmDeleteBtn = document.getElementById('confirmDelete');
+const deleteItemTitle = document.getElementById('deleteItemTitle');
+
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -46,7 +52,54 @@ function setupEventListeners() {
             closeModalHandler();
         }
     });
+
+    // Event delegation for vault buttons
+    passwordList.addEventListener('click', (e) => {
+        const deleteBtn = e.target.closest('.btn-delete');
+        if (deleteBtn) {
+            const id = parseInt(deleteBtn.dataset.id);
+            deletePassword(id);
+            return;
+        }
+        
+        const copyBtn = e.target.closest('.btn-copy');
+        if (copyBtn) {
+            const id = parseInt(copyBtn.dataset.id);
+            copyVaultPassword(id);
+            return;
+        }
+        
+        const showBtn = e.target.closest('.btn-show');
+        if (showBtn) {
+            const id = parseInt(showBtn.dataset.id);
+            showPassword(id);
+        }
+    });
+
+    // Delete modal handlers
+    cancelDelete.addEventListener('click', () => {
+        deleteModal.classList.remove('active');
+        passwordToDelete = null;
+    });
+
+    confirmDeleteBtn.addEventListener('click', () => {
+        if (passwordToDelete) {
+            performDelete(passwordToDelete);
+            deleteModal.classList.remove('active');
+            passwordToDelete = null;
+        }
+    });
+
+    // Close delete modal on outside click
+    deleteModal.addEventListener('click', (e) => {
+        if (e.target === deleteModal) {
+            deleteModal.classList.remove('active');
+            passwordToDelete = null;
+        }
+    });
 }
+
+
 
 // Generate Password
 async function generatePassword() {
@@ -137,9 +190,9 @@ function renderVault(passwords) {
             <div class="password-item-header">
                 <span class="password-item-title">${escapeHtml(pwd.title)}</span>
                 <div class="password-item-actions">
-                    <button class="btn-secondary" onclick="showPassword(${pwd.id})" title="Показать">👁️</button>
-                    <button class="btn-secondary" onclick="copyVaultPassword(${pwd.id})" title="Копировать">📋</button>
-                    <button class="btn-secondary" onclick="deletePassword(${pwd.id})" title="Удалить">🗑️</button>
+                    <button class="btn-secondary btn-show" data-id="${pwd.id}" title="Показать">👁️</button>
+                    <button class="btn-secondary btn-copy" data-id="${pwd.id}" title="Копировать">📋</button>
+                    <button class="btn-secondary btn-delete" data-id="${pwd.id}" title="Удалить">🗑️</button>
                 </div>
             </div>
             <div class="password-item-details">
@@ -151,6 +204,7 @@ function renderVault(passwords) {
 }
 
 // Modal Functions
+
 function openModal() {
     if (!currentGeneratedPassword) {
         showNotification('Сначала сгенерируйте пароль', 'error');
@@ -228,7 +282,37 @@ async function copyVaultPassword(id) {
   }
 }
 
+// Удаление пароля
+function deletePassword(id) {
+    // Find the password item to get its title
+    const passwordItem = document.querySelector(`.password-item[data-id="${id}"]`);
+    if (passwordItem) {
+        const title = passwordItem.querySelector('.password-item-title').textContent;
+        deleteItemTitle.textContent = title;
+    }
+    
+    passwordToDelete = id;
+    deleteModal.classList.add('active');
+}
+
+async function performDelete(id) {
+    try {
+        const response = await fetch(`${API_URL}/vault/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) throw new Error('Ошибка удаления');
+
+        showNotification('Пароль удалён', 'success');
+        loadVault();
+    } catch (error) {
+        showError('Не удалось удалить пароль');
+    }
+}
+
 // Utility Functions
+
+
 function showNotification(message, type = 'success') {
     notification.textContent = message;
     notification.className = `notification ${type === 'error' ? 'error' : ''} show`;
@@ -252,3 +336,4 @@ function escapeHtml(text) {
 window.deletePassword = deletePassword;
 window.copyVaultPassword = copyVaultPassword;
 window.showPassword = showPassword;
+

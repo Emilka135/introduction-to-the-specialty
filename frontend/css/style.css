@@ -360,3 +360,27 @@ header h1 {
         padding: 20px;
     }
 }
+
+/* Delete Modal */
+.modal-delete {
+    text-align: center;
+}
+
+.modal-delete h3 {
+    color: #ef4444;
+    margin-bottom: 15px;
+}
+
+.modal-delete p {
+    color: #666;
+    margin-bottom: 10px;
+}
+
+#confirmDelete {
+    background: #ef4444 !important;
+}
+
+#confirmDelete:hover {
+    background: #dc2626 !important;
+}
+

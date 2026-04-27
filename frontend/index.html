@@ -92,13 +92,26 @@
                         <button type="submit" class="btn-primary">Сохранить</button>
                     </div>
                 </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content modal-delete">
+            <h3>🗑️ Удалить пароль?</h3>
+            <p id="deleteConfirmText">Вы действительно хотите удалить этот пароль? Это действие нельзя отменить.</p>
+            <p id="deleteItemTitle" style="font-weight: 600; color: #667eea; margin: 10px 0;"></p>
+            <div class="modal-actions">
+                <button id="cancelDelete" class="btn-secondary">Отмена</button>
+                <button id="confirmDelete" class="btn-primary" style="background: #ef4444;">Удалить</button>
             </div>
         </div>
-
-        <!-- Notifications -->
-        <div id="notification" class="notification"></div>
     </div>
+
+    <!-- Notifications -->
+    <div id="notification" class="notification"></div>
 
     <script src="js/app.js"></script>
 </body>
 </html>
+
